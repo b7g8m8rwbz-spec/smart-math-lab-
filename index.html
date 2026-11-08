@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#101A35">
+<title>صيدي الإجابة | مختبر الرياضيات الذكي</title>
+<style>
+:root{--n:#101A35;--b:#287BFF;--s:#C5CEDD;--p:#9875FF}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;padding:18px;background:radial-gradient(circle at 15% 10%,#293c70 0,transparent 32%),linear-gradient(145deg,#080e20,var(--n) 60%,#211a49);color:#fff;font-family:Tahoma,Arial,sans-serif;display:grid;place-items:center}
+main{width:min(760px,100%);background:#101a35ed;border:1px solid #7894c65c;border-radius:26px;padding:clamp(20px,5vw,40px);box-shadow:0 20px 70px #0008}
+header{text-align:center}.eyebrow{color:#a9c7ff;letter-spacing:1px;font-size:13px}.orb{font-size:42px;margin:10px}h1{font-size:clamp(28px,6vw,43px);margin:8px 0}.sub{color:var(--s);line-height:1.8}.tag{display:inline-block;border:1px solid #287bff88;color:#c7d9ff;border-radius:30px;padding:8px 15px;margin-top:10px}
+.card{margin-top:26px;padding:clamp(18px,4vw,30px);background:#192849;border:1px solid #ffffff20;border-radius:20px}.center{text-align:center}.muted{color:var(--s)}button{font:inherit;cursor:pointer;border:0;border-radius:14px;padding:15px;background:linear-gradient(100deg,var(--b),var(--p));color:white;font-weight:bold;font-size:17px;width:100%;margin-top:12px}button:disabled{opacity:.6;cursor:default}.choices{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.choice{background:#263b63;border:1px solid #607ba9;font-size:22px;min-height:62px}.choice.good{background:#17684e;border-color:#65d9ac}.choice.bad{background:#71334b;border-color:#ff9bb2}.stats{display:flex;justify-content:space-between;gap:12px;color:var(--s)}.stats strong{color:white}.track{height:8px;border-radius:20px;background:#31405e;margin:16px 0 24px;overflow:hidden}.fill{height:100%;background:linear-gradient(90deg,var(--b),var(--p));width:0;transition:.2s}.question{font-size:clamp(23px,4vw,31px);text-align:center;line-height:1.7;margin:20px 0}.feedback{text-align:center;min-height:32px;margin-top:18px;font-weight:bold;line-height:1.7}.secondary{background:transparent;border:1px solid #8193b7;color:#dce6fa}.hidden{display:none!important}.score{font-size:48px;color:#b8d0ff;font-weight:bold}.small{font-size:13px;line-height:1.8;color:#c5cedd;text-align:center;margin-top:22px}
+@media(max-width:480px){.choices{grid-template-columns:1fr}.choice{min-height:52px}}
+</style>
+</head>
+<body><main>
+<header><div class="eyebrow">SMART MATH LAB</div><div class="orb">✦</div><h1>مختبر الرياضيات الذكي</h1><div class="sub">تحدّي صيدي الإجابة</div><div class="tag">الجبر · المتوسط الحسابي</div></header>
+<section id="home" class="card center"><h2>هل أنتِ مستعدة للتحدّي؟</h2><p class="sub">أجيبي عن خمسة أسئلة، واجمعي النقاط لتقتربي من لقب بطلة المختبر.</p><button onclick="start()">ابدئي التحدّي</button></section>
+<section id="play" class="card hidden"><div class="stats"><span id="count">السؤال ١ من ٥</span><span>النقاط: <strong id="points">٠</strong></span></div><div class="track"><div id="fill" class="fill"></div></div><div id="q" class="question"></div><div id="choices" class="choices"></div><div id="feedback" class="feedback" aria-live="polite"></div><button id="next" class="hidden" onclick="advance()">السؤال التالي</button></section>
+<section id="end" class="card center hidden"><div style="font-size:55px">🏆</div><h2>انتهى التحدّي!</h2><div id="result" class="score"></div><p id="message" class="sub"></p><button onclick="start()">إعادة اللعب</button><button class="secondary" onclick="home()">العودة للبداية</button></section>
+<p class="small">إعداد: مختبر الرياضيات الذكي<br>التصحيح الحالي آلي بمقارنة الإجابة بالمفتاح الصحيح، وليس نموذج ذكاء اصطناعي متصلًا.</p>
+</main>
+<script>
+const qs=[
+{q:"إذا كان ٣س = ١٢، فما قيمة س؟",a:["٣","٤","٥"],c:1,why:"نقسم الطرفين على ٣، فنحصل على س = ٤."},
+{q:"ما المتوسط الحسابي للأعداد ٤، ٦، ٨؟",a:["٥","٦","٧"],c:1,why:"نجمع الأعداد: ١٨، ثم نقسم على ٣، فيكون المتوسط ٦."},
+{q:"إذا كان س + ٧ = ١٥، فما قيمة س؟",a:["٨","٩","٧"],c:0,why:"نطرح ٧ من الطرفين: س = ١٥ − ٧ = ٨."},
+{q:"ما المتوسط الحسابي للعددين ١٠ و١٤؟",a:["١١","١٢","١٣"],c:1,why:"نجمع ١٠ + ١٤ = ٢٤، ثم نقسم على ٢، فيكون المتوسط ١٢."},
+{q:"إذا كان ٢س + ٢ = ١٠، فما قيمة س؟",a:["٣","٤","٥"],c:0,why:"نطرح ٢ من الطرفين ثم نقسم على ٢: س = ٤؟ انتبهي: ١٠ − ٢ = ٨، و٨ ÷ ٢ = ٤."}
+];
+qs[4].c=1;
+let i=0,score=0,locked=false;
+const $=id=>document.getElementById(id),ar=n=>String(n).replace(/\d/g,d=>"٠١٢٣٤٥٦٧٨٩"[d]);
+function show(id){["home","play","end"].forEach(x=>$(x).classList.toggle("hidden",x!==id))}
+function home(){show("home")}
+function start(){i=0;score=0;show("play");draw()}
+function draw(){locked=false;let x=qs[i];$("count").textContent=`السؤال ${ar(i+1)} من ٥`;$("points").textContent=ar(score);$("fill").style.width=(i/5*100)+"%";$("q").textContent=x.q;$("feedback").textContent="";$("next").classList.add("hidden");$("next").textContent=i===4?"عرض النتيجة":"السؤال التالي";$("choices").innerHTML="";x.a.forEach((v,j)=>{let b=document.createElement("button");b.className="choice";b.textContent=v;b.onclick=()=>answer(j);$("choices").appendChild(b)})}
+function answer(j){if(locked)return;locked=true;let x=qs[i];[...$("choices").children].forEach((b,k)=>{b.disabled=true;if(k===x.c)b.classList.add("good");else if(k===j)b.classList.add("bad")});if(j===x.c){score++;$("feedback").innerHTML="إجابة صحيحة! 🎉<br>"+x.why;$("feedback").style.color="#7be0b5"}else{$("feedback").innerHTML="ليست الإجابة الصحيحة.<br>"+x.why;$("feedback").style.color="#ffc0cf"}$("points").textContent=ar(score);$("next").classList.remove("hidden")}
+function advance(){if(i<4){i++;draw()}else{show("end");$("fill").style.width="100%";$("result").textContent=ar(score)+" / ٥";$("message").textContent=score===5?"رائع! تستحقين لقب بطلة مختبر الرياضيات الذكي.":score>=3?"أداء جميل! واصلي المحاولة.":"شكرًا لمشاركتك! يمكنك إعادة التحدّي."}}
+</script></body></html>
