@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#101A35">
+<title>تحدّي صيدي الإجابة | مختبر الرياضيات الذكي</title>
+<style>
+:root{--n:#101A35;--b:#287BFF;--s:#C5CEDD;--p:#9875FF}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;padding:16px;background:radial-gradient(circle at 15% 10%,#293c70 0,transparent 32%),linear-gradient(145deg,#080e20,var(--n) 60%,#211a49);color:#fff;font-family:Tahoma,Arial,sans-serif;display:grid;place-items:center}
+main{width:min(800px,100%);background:#101a35ed;border:1px solid #7894c65c;border-radius:26px;padding:clamp(18px,4vw,36px);box-shadow:0 20px 70px #0008}
+header{text-align:center}.eyebrow{color:#a9c7ff;letter-spacing:1px;font-size:13px}.orb{font-size:40px;margin:8px}
+h1{font-size:clamp(27px,6vw,42px);margin:8px 0}.sub{color:var(--s);line-height:1.9}
+.tag{display:inline-block;border:1px solid #287bff88;color:#c7d9ff;border-radius:30px;padding:8px 15px;margin-top:10px}
+.card{margin-top:22px;padding:clamp(17px,4vw,28px);background:#192849;border:1px solid #ffffff20;border-radius:20px}
+.center{text-align:center}.muted{color:var(--s)}
+button{font:inherit;cursor:pointer;border:0;border-radius:14px;padding:14px;background:linear-gradient(100deg,var(--b),var(--p));color:white;font-weight:bold;font-size:17px;width:100%;margin-top:12px}
+button:disabled{opacity:.55;cursor:default}
+.choices{display:grid;grid-template-columns:repeat(3,1fr);gap:11px}
+.choice{background:#263b63;border:1px solid #607ba9;font-size:22px;min-height:62px}
+.choice.good{background:#17684e;border-color:#65d9ac}.choice.bad{background:#71334b;border-color:#ff9bb2}
+.stats{display:flex;justify-content:space-between;gap:10px;color:var(--s);flex-wrap:wrap}
+.stats strong{color:white}.track{height:8px;border-radius:20px;background:#31405e;margin:15px 0 20px;overflow:hidden}
+.fill{height:100%;background:linear-gradient(90deg,var(--b),var(--p));width:0;transition:width .2s}
+.question{font-size:clamp(22px,4vw,30px);text-align:center;line-height:1.8;margin:20px 0}
+.feedback{text-align:center;min-height:30px;margin-top:16px;font-weight:bold;line-height:1.8}
+.timer-wrap{display:flex;justify-content:center;align-items:center;margin:12px auto}
+.timer{width:74px;height:74px;border-radius:50%;border:3px solid #7894c6;display:grid;place-items:center;font-size:27px;font-weight:bold;color:#fff;background:#101a35}
+.timer.urgent{border-color:#ff9bb2;color:#ffb5c6}
+.secondary{background:transparent;border:1px solid #8193b7;color:#dce6fa}
+.hidden{display:none!important}.score{font-size:44px;color:#b8d0ff;font-weight:bold}
+.small{font-size:13px;line-height:1.8;color:#c5cedd;text-align:center;margin-top:20px}
+.team-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:18px 0}
+.team-pill{padding:12px 8px;border:1px solid #607ba9;border-radius:13px;text-align:center;color:#dce6fa;background:#22365a}
+.team-pill.active{border-color:#72a7ff;background:#284b80;color:white}
+.result-row{display:grid;grid-template-columns:1.2fr .8fr .8fr;gap:8px;padding:13px 10px;border-bottom:1px solid #ffffff20;align-items:center}
+.result-row.head{color:#a9c7ff;font-weight:bold}.winner{background:#24466a;border-radius:12px}
+@media(max-width:520px){.choices{grid-template-columns:1fr}.choice{min-height:52px}.team-grid{grid-template-columns:1fr}.result-row{font-size:14px}}
+</style>
+</head>
+<body><main>
+<header>
+<div class="eyebrow">SMART MATH LAB</div><div class="orb">✦</div>
+<h1>مختبر الرياضيات الذكي</h1>
+<div class="sub">تحدّي صيدي الإجابة</div>
+<div class="tag">٣ شعب · ٣ أسئلة لكل شعبة · ١٥ ثانية للسؤال</div>
+</header>
+
+<section id="home" class="card center">
+<h2>هل أنتن مستعدات للتحدّي؟</h2>
+<p class="sub">تتنافس ثلاث شعب. لكل شعبة ٣ أسئلة مختلفة، ولكل سؤال ١٥ ثانية. تُسجّل النقاط والوقت، ثم تظهر الشعبة الفائزة.</p>
+<div class="team-grid"><div class="team-pill">شعبة ١٠١</div><div class="team-pill">شعبة ١٠٢</div><div class="team-pill">شعبة ١٠٣</div></div>
+<button onclick="beginCompetition()">ابدئي المسابقة</button>
+</section>
+
+<section id="play" class="card hidden">
+<div class="stats"><span id="teamName">شعبة ١٠١</span><span id="count">السؤال ١ من ٣</span><span>النقاط: <strong id="points">٠</strong></span></div>
+<div class="track"><div id="fill" class="fill"></div></div>
+<div class="timer-wrap"><div id="timer" class="timer">١٥</div></div>
+<div id="q" class="question"></div>
+<div id="choices" class="choices"></div>
+<div id="feedback" class="feedback" aria-live="polite"></div>
+<button id="next" class="hidden" onclick="advance()">السؤال التالي</button>
+</section>
+
+<section id="between" class="card center hidden">
+<div style="font-size:48px">👏</div><h2 id="betweenTitle">انتهت مشاركة شعبة ١٠١!</h2>
+<p id="betweenText" class="sub"></p>
+<button onclick="nextTeam()">ابدئي الشعبة التالية</button>
+</section>
+
+<section id="end" class="card center hidden">
+<div style="font-size:55px">🏆</div><h2>النتيجة النهائية</h2>
+<p class="sub">ترتيب الشعب حسب عدد الإجابات الصحيحة، وعند التعادل يُحتسب الوقت الأقل.</p>
+<div id="results"></div>
+<h2 id="winnerTitle" style="color:#b8d0ff"></h2>
+<p id="winnerMessage" class="sub"></p>
+<button onclick="beginCompetition()">إعادة المسابقة</button>
+<button class="secondary" onclick="home()">العودة للبداية</button>
+</section>
+<p class="small">إعداد: مختبر الرياضيات الذكي<br>يعمل التحدّي دون اتصال بالإنترنت بعد فتح الملف.</p>
+</main>
+<script>
+const teams = [
+ {name:"شعبة ١٠١", qs:[
+  {q:"ما العدد التالي في النمط: ٢، ٤، ٦، ٨، ؟",a:["٩","١٠","١٢"],c:1,why:"نضيف ٢ في كل مرة، فالعدد التالي ١٠."},
+  {q:"ما ناتج ٧ × ٦؟",a:["٤٢","٣٦","٤٨"],c:0,why:"٧ × ٦ = ٤٢."},
+  {q:"ما المتوسط الحسابي للأعداد ٣، ٦، ٩؟",a:["٥","٦","٧"],c:1,why:"مجموعها ١٨، نقسمه على ٣ فيكون المتوسط ٦."}
+ ]},
+ {name:"شعبة ١٠٢", qs:[
+  {q:"ما العدد الأكبر؟",a:["٠٫٨","٠٫٥","٠٫٣"],c:0,why:"٠٫٨ هو الأكبر."},
+  {q:"ما ناتج ٤٨ ÷ ٦؟",a:["٦","٧","٨"],c:2,why:"٤٨ ÷ ٦ = ٨."},
+  {q:"كم ضلعًا للمثمن؟",a:["٦","٨","١٠"],c:1,why:"المثمن شكل هندسي له ٨ أضلاع."}
+ ]},
+ {name:"شعبة ١٠٣", qs:[
+  {q:"ما العدد الناقص: ٥، ١٠، ١٥، ؟، ٢٥",a:["١٨","٢٠","٢٢"],c:1,why:"نزيد ٥ كل مرة، فالعدد الناقص ٢٠."},
+  {q:"ما ناتج ١٢ + ١٩؟",a:["٣٠","٣١","٣٢"],c:1,why:"١٢ + ١٩ = ٣١."},
+  {q:"إذا كان محيط مربع ٢٠ سم، فكم طول ضلعه؟",a:["٤ سم","٥ سم","٦ سم"],c:1,why:"للمربع ٤ أضلاع متساوية، ٢٠ ÷ ٤ = ٥ سم."}
+ ]}
+];
+let teamIndex=0, qIndex=0, score=0, locked=false, timerId=null, remaining=15, teamStart=0;
+let results=[];
+const $=id=>document.getElementById(id);
+const ar=n=>String(n).replace(/\d/g,d=>"٠١٢٣٤٥٦٧٨٩"[d]);
+function show(id){["home","play","between","end"].forEach(x=>$(x).classList.toggle("hidden",x!==id))}
+function home(){stopTimer();show("home")}
+function beginCompetition(){stopTimer();teamIndex=0;results=[];startTeam()}
+function startTeam(){qIndex=0;score=0;teamStart=Date.now();show("play");draw()}
+function stopTimer(){if(timerId){clearInterval(timerId);timerId=null}}
+function draw(){
+ stopTimer();locked=false;remaining=15;
+ const t=teams[teamIndex],x=t.qs[qIndex];
+ $("teamName").textContent=t.name;
+ $("count").textContent=`السؤال ${ar(qIndex+1)} من ٣`;
+ $("points").textContent=ar(score);
+ $("fill").style.width=(qIndex/3*100)+"%";
+ $("timer").textContent=ar(remaining);$("timer").classList.remove("urgent");
+ $("q").textContent=x.q;$("feedback").textContent="";
+ $("next").classList.add("hidden");$("next").textContent=qIndex===2?"إنهاء الشعبة":"السؤال التالي";
+ $("choices").innerHTML="";
+ x.a.forEach((v,j)=>{let b=document.createElement("button");b.className="choice";b.textContent=v;b.onclick=()=>answer(j);$("choices").appendChild(b)});
+ timerId=setInterval(()=>{remaining--;$("timer").textContent=ar(remaining);if(remaining<=5)$("timer").classList.add("urgent");if(remaining<=0)answer(-1)},1000);
+}
+function answer(j){
+ if(locked)return;locked=true;stopTimer();
+ const x=teams[teamIndex].qs[qIndex];
+ [...$("choices").children].forEach((b,k)=>{b.disabled=true;if(k===x.c)b.classList.add("good");else if(k===j)b.classList.add("bad")});
+ if(j===x.c){score++;$("feedback").innerHTML="إجابة صحيحة! 🎉<br>"+x.why;$("feedback").style.color="#7be0b5"}
+ else if(j===-1){$("feedback").innerHTML="انتهى الوقت! ⏰<br>"+x.why;$("feedback").style.color="#ffc0cf"}
+ else{$("feedback").innerHTML="ليست الإجابة الصحيحة.<br>"+x.why;$("feedback").style.color="#ffc0cf"}
+ $("points").textContent=ar(score);$("next").classList.remove("hidden");
+}
+function advance(){if(!locked)return;if(qIndex<2){qIndex++;draw()}else finishTeam()}
+function finishTeam(){
+ stopTimer();
+ const elapsed=Math.round((Date.now()-teamStart)/1000);
+ results.push({name:teams[teamIndex].name,score:score,time:elapsed});
+ if(teamIndex<2){
+  $("betweenTitle").textContent=`انتهت مشاركة ${teams[teamIndex].name}!`;
+  $("betweenText").textContent=`نتيجتها: ${ar(score)} من ٣ إجابات صحيحة، والوقت: ${formatTime(elapsed)}.`;
+  show("between");
+ }else showResults();
+}
+function nextTeam(){teamIndex++;startTeam()}
+function formatTime(sec){return `${ar(Math.floor(sec/60))} دقيقة و${ar(sec%60)} ثانية`}
+function showResults(){
+ show("end");
+ const sorted=[...results].sort((a,b)=>b.score-a.score||a.time-b.time);
+ $("results").innerHTML='<div class="result-row head"><span>الشعبة</span><span>النقاط</span><span>الوقت</span></div>'+
+ sorted.map((r,i)=>`<div class="result-row ${i===0?'winner':''}"><span>${i===0?'🏆 ':''}${r.name}</span><strong>${ar(r.score)} / ٣</strong><span>${formatTime(r.time)}</span></div>`).join("");
+ const top=sorted[0],tied=sorted.filter(r=>r.score===top.score&&r.time===top.time);
+ if(tied.length>1){$("winnerTitle").textContent="تعادل في المركز الأول!";$("winnerMessage").textContent=tied.map(x=>x.name).join(" و")+" حصلتا على النتيجة نفسها وفي الوقت نفسه."}
+ else{$("winnerTitle").textContent=`الفائزة: ${top.name} 🏆`;$("winnerMessage").textContent="مبارك! أنتن بطلات مختبر الرياضيات الذكي."}
+}
+</script>
+</body></html>
